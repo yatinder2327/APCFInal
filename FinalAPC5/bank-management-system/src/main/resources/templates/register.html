@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root{ --bg:#f3f6fb; --paper:#ffffff; --ink:#0b1220; --accent:#1fb6ff; --accent2:#7c3aed; --muted:#64748b; }
+        *{ box-sizing:border-box; }
+        body{ margin:0; min-height:100vh; display:grid; place-items:center; background:linear-gradient(180deg, var(--bg), #eaf1fb); font-family:'Poppins',sans-serif; color:var(--ink); }
+        .card{ width:min(520px, 92%); background:var(--paper); border:1px solid #e5e7eb; border-radius:18px; padding:26px; box-shadow:0 10px 30px rgba(2,8,23,.08); }
+        h2{ margin:0 0 6px; font-size:26px; }
+        p{ margin:0 0 18px; color:var(--muted); font-size:14px; }
+        label{ display:block; margin:14px 0 6px; font-size:13px; color:var(--muted); }
+        input, select{ width:100%; padding:12px 14px; border-radius:12px; border:1px solid #e5e7eb; background:#fff; color:var(--ink); outline:none; }
+        input:focus, select:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(31,182,255,.18); }
+        button{ margin-top:16px; width:100%; padding:12px 16px; border:none; border-radius:12px; font-weight:700; color:#0b1220; background:linear-gradient(90deg,var(--accent),var(--accent2)); box-shadow:0 10px 24px rgba(31,182,255,.25); cursor:pointer; }
+        a{ color:var(--accent2); text-decoration:none; }
+        .footer{ margin-top:12px; text-align:center; font-size:12px; color:var(--muted); }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <h2>Create your account</h2>
+        <p>Sign up to access your banking dashboard</p>
+        <form action="/register" method="post">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+            <label for="role">Role</label>
+            <select id="role" name="role">
+                <option value="USER" selected>User</option>
+                <option value="BANK_PERSON">Bank Person</option>
+                <option value="ADMIN">Admin</option>
+            </select>
+            <button type="submit">Create account</button>
+        </form>
+        <div class="footer">Already have an account? <a href="/login">Sign in</a></div>
+    </main>
+</body>
+<script>
+// Preselect role from query param (?role=USER|BANK_PERSON|ADMIN)
+(function(){
+    try{
+        const p = new URLSearchParams(location.search);
+        const r = (p.get('role')||'').toUpperCase();
+        const sel = document.getElementById('role');
+        if(['USER','BANK_PERSON','ADMIN'].includes(r)) sel.value = r;
+    }catch(e){}
+})();
+</script>
+</html>
+

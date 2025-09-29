@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --bg:#0b1020; --surface:#0f1629; --surface-2:#0b1324; --border:#1f2a44; --text:#e5e7eb; --muted:#9aa5b3;
+            --primary:#1fb6ff; --primary-2:#7c3aed; --success:#10b981; --danger:#ef4444; --warning:#f59e0b;
+        }
+        *{ box-sizing:border-box; }
+        body{ margin:0; min-height:100vh; font-family:'Poppins',sans-serif; color:var(--text); background:radial-gradient(1200px 600px at -10% -10%, rgba(31,182,255,.12), transparent 40%), radial-gradient(1000px 600px at 110% -20%, rgba(124,58,237,.12), transparent 40%), linear-gradient(180deg,var(--bg),#0b1220 60%); }
+        .layout{ display:grid; grid-template-columns: 240px 1fr; min-height:100vh; }
+        .sidebar{ background:var(--surface); border-right:1px solid var(--border); padding:20px 16px; position:sticky; top:0; height:100vh; }
+        .brand{ display:flex; align-items:center; gap:10px; margin-bottom:24px; }
+        .logo{ width:38px; height:38px; border-radius:10px; display:grid; place-items:center; color:#0b1220; font-weight:800; background:linear-gradient(135deg,var(--primary),var(--primary-2)); box-shadow:0 8px 24px rgba(31,182,255,.25); }
+        .bankName{ margin:0; font-size:18px; letter-spacing:.3px; }
+        .nav{ display:grid; gap:6px; }
+        .nav a{ color:var(--text); text-decoration:none; padding:10px 12px; border-radius:10px; opacity:.85; }
+        .nav a:hover{ background:rgba(255,255,255,.03); opacity:1; }
+
+        .content{ padding:26px 24px; }
+        .pageHead{ display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+        .pageHead h1{ margin:0; font-size:22px; }
+        .pill{ font-size:12px; padding:6px 10px; border-radius:999px; background:rgba(31,182,255,.12); color:var(--primary); border:1px solid rgba(31,182,255,.35); }
+
+        .cards{ display:grid; grid-template-columns: 1.3fr 1fr; gap:18px; }
+        .card{ background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015)); border:1px solid var(--border); border-radius:16px; padding:18px; }
+        .card h3{ margin:0 0 10px; font-size:16px; }
+        .kpi{ display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
+        .kpi .tile{ background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:14px; }
+        .kpi .label{ color:var(--muted); font-size:12px; }
+        .kpi .value{ font-size:20px; margin-top:4px; }
+
+        .list{ display:grid; gap:10px; max-height:360px; overflow:auto; }
+        .row{ display:flex; justify-content:space-between; align-items:center; background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:12px; }
+        .row .left{ display:flex; gap:10px; align-items:center; }
+        .badge{ font-size:11px; padding:4px 8px; border-radius:999px; border:1px solid var(--border); color:var(--muted); }
+        .badge.success{ color:var(--success); border-color:rgba(16,185,129,.35); background:rgba(16,185,129,.08); }
+        .badge.pending{ color:var(--warning); border-color:rgba(245,158,11,.35); background:rgba(245,158,11,.08); }
+        .badge.denied{ color:var(--danger); border-color:rgba(239,68,68,.35); background:rgba(239,68,68,.08); }
+
+        .applyBox{ display:grid; gap:10px; }
+        .input{ width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--border); background:var(--surface-2); color:var(--text); }
+        .btn{ border:none; cursor:pointer; padding:10px 14px; border-radius:10px; font-weight:700; color:#0b1220; background:linear-gradient(90deg,var(--primary),var(--primary-2)); box-shadow:0 8px 24px rgba(31,182,255,.25); }
+        .muted{ color:var(--muted); }
+        @media (max-width: 1024px){ .layout{ grid-template-columns: 1fr; } .sidebar{ position:relative; height:auto; } .cards{ grid-template-columns:1fr; } .kpi{ grid-template-columns:repeat(2,1fr);} }
+        @media (max-width: 768px){ .kpi{ grid-template-columns:1fr; } }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand"><div class="logo">B</div><h2 class="bankName">Your Bank</h2></div>
+            <nav class="nav">
+                <a href="#">Overview</a>
+                <a href="#">Accounts</a>
+                <a href="#">Payments</a>
+                <a href="#">Loans</a>
+                <a href="#">Settings</a>
+                <a href="/">Logout</a>
+            </nav>
+        </aside>
+        <main class="content">
+            <div class="pageHead">
+                <h1>Dashboard</h1>
+                <span class="pill">Signed in</span>
+            </div>
+            <div class="cards">
+                <section class="card">
+                    <h3>Overview</h3>
+                    <div class="kpi" style="margin-top:10px;">
+                        <div class="tile">
+                            <div class="label">Available Balance</div>
+                            <div class="value" id="balance">Loading...</div>
+                        </div>
+                        <div class="tile">
+                            <div class="label">Transactions</div>
+                            <div class="value" id="txCount">-</div>
+                        </div>
+                        <div class="tile">
+                            <div class="label">Active Loans</div>
+                            <div class="value" id="loanCount">-</div>
+                        </div>
+                        <div class="tile">
+                            <div class="label">Account Number</div>
+                            <div class="value" id="acctNo">-</div>
+                        </div>
+                        <div class="tile">
+                            <div class="label">User ID</div>
+                            <div class="value" id="userId">-</div>
+                        </div>
+                    </div>
+                </section>
+                <section class="card">
+                    <h3>Apply for Loan</h3>
+                    <div class="applyBox">
+                        <input class="input" type="number" id="amount" placeholder="Amount" min="1" required>
+                        <button class="btn" id="applyBtn" type="button">Apply</button>
+                        <div id="applyMsg" class="muted"></div>
+                    </div>
+                </section>
+            </div>
+            <div class="cards" style="margin-top:18px;">
+                <section class="card">
+                    <h3>Recent Transactions</h3>
+                    <div id="txList" class="list" style="margin-top:10px;"></div>
+                </section>
+                <section class="card">
+                    <h3>Your Loans</h3>
+                    <div id="loanList" class="list" style="margin-top:10px;"></div>
+                </section>
+            </div>
+        </main>
+    </div>
+        <script>
+            async function fetchJSON(url, options){
+                const res = await fetch(url, Object.assign({headers:{'Content-Type':'application/json'}}, options||{}));
+                if(!res.ok) throw new Error(await res.text());
+                try { return await res.json(); } catch { return {}; }
+            }
+            function formatINR(n){ return new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR'}).format(n||0); }
+            async function load(){
+                try {
+                    const [balance, tx, loans, acctNo, userId] = await Promise.all([
+                        fetchJSON('/api/user/balance'),
+                        fetchJSON('/api/user/transactions'),
+                        fetchJSON('/api/user/loans'),
+                        fetch('/api/user/account-number').then(r=>r.text()),
+                        fetch('/api/user/user-id').then(r=>r.text())
+                    ]);
+                    document.getElementById('balance').textContent = formatINR(balance);
+                    document.getElementById('txCount').textContent = (tx||[]).length;
+                    document.getElementById('loanCount').textContent = (loans||[]).length;
+                    document.getElementById('acctNo').textContent = acctNo || '-';
+                    document.getElementById('userId').textContent = userId || '-';
+
+                    const txList = document.getElementById('txList');
+                    txList.innerHTML = (tx||[]).slice(0,8).map(t=>
+                        `<div class='row'><div class='left'><span class='badge'>${t.type}</span></div><div>${formatINR(t.amount)}</div></div>`
+                    ).join('') || `<div class='muted'>No transactions</div>`;
+
+                    const loanList = document.getElementById('loanList');
+                    loanList.innerHTML = (loans||[]).map(l=>{
+                        const cls = l.status === 'APPROVED' ? 'success' : (l.status === 'DENIED' ? 'denied' : 'pending');
+                        return `<div class='row'><div class='left'><span class='badge ${cls}'>${l.status}</span></div><div>${formatINR(l.amount)}</div></div>`;
+                    }).join('') || `<div class='muted'>No loans</div>`;
+                } catch(e) {
+                    document.getElementById('balance').textContent = 'Unavailable';
+                }
+            }
+            document.getElementById('applyBtn').addEventListener('click', async ()=>{
+                const amount = parseFloat(document.getElementById('amount').value);
+                const msg = document.getElementById('applyMsg');
+                if(!amount || amount <= 0){ msg.textContent = 'Enter a valid amount'; return; }
+                try { const res = await fetch('/api/user/loan/apply', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({amount})}); msg.textContent = await res.text(); load(); }
+                catch{ msg.textContent = 'Failed to apply'; }
+            });
+            load();
+        </script>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root{ 
+            --bg:#0b1020; --surface:#0f1629; --surface-2:#0c1324; --border:#1f2a44; --ink:#e6e8ef; --muted:#9aa5b3; 
+            --c1:#22d3ee; --c2:#8b5cf6; --success:#10b981; --warning:#f59e0b; --danger:#ef4444;
+            --shadow: 0 8px 30px rgba(0,0,0,.35);
+        }
+        *{ box-sizing:border-box; }
+        body{ margin:0; min-height:100vh; font-family:'Poppins',sans-serif; color:var(--ink); background:radial-gradient(1200px 600px at 80% -10%, rgba(34,211,238,.08), transparent), linear-gradient(180deg,#070b16,#0c1426); }
+        .layout{ display:grid; grid-template-columns: 240px 1fr; min-height:100vh; }
+        .sidebar{ padding:24px 18px; border-right:1px solid var(--border); background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); }
+        .brand{ display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+        .brand-logo{ width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg,var(--c1),var(--c2)); box-shadow:var(--shadow); }
+        .brand h2{ margin:0; font-size:18px; letter-spacing:.3px; }
+        .nav{ margin-top:16px; display:grid; gap:8px; }
+        .nav a{ display:block; padding:10px 12px; border-radius:10px; text-decoration:none; color:var(--ink); border:1px solid transparent; }
+        .nav a.active, .nav a:hover{ background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); border-color:var(--border); }
+        .content{ padding:28px 28px 40px; width:min(1300px, 100%); }
+        header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+        .pill{ font-size:12px; padding:6px 10px; border-radius:999px; background:rgba(139,92,246,.12); color:var(--c2); border:1px solid rgba(139,92,246,.35); }
+        .quick{ display:flex; gap:10px; }
+        .btn{ border:none; padding:10px 14px; border-radius:10px; font-weight:700; color:#0b1220; background:linear-gradient(90deg,var(--c1),var(--c2)); box-shadow:0 8px 24px rgba(34,211,238,.35); cursor:pointer; }
+        .btn-ghost{ background:transparent; color:var(--ink); border:1px solid var(--border); }
+        .stats{ display:grid; grid-template-columns: repeat(4, 1fr); gap:14px; margin-bottom:18px; }
+        .stat{ padding:16px; border-radius:16px; border:1px solid var(--border); background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); }
+        .stat h4{ margin:0 0 6px; font-weight:600; color:var(--muted); font-size:12px; }
+        .stat p{ margin:0; font-weight:700; font-size:22px; }
+        .grid{ display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+        .panel{ border:1px solid var(--border); border-radius:16px; background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); padding:16px; }
+        .panel h3{ margin:0 0 10px; font-size:16px; }
+        .list{ display:grid; gap:8px; max-height:520px; overflow:auto; }
+        .row{ display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border); border-radius:12px; padding:12px; background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); }
+        .row .meta{ color:var(--muted); font-size:12px; margin-top:4px; }
+        .row .actions{ display:flex; gap:8px; }
+        .badge{ display:inline-block; padding:4px 8px; border-radius:999px; font-size:11px; border:1px solid var(--border); background:rgba(255,255,255,.03); }
+        .badge.success{ color:#0ad19e; border-color:rgba(16,185,129,.35); background:rgba(16,185,129,.12); }
+        .badge.warning{ color:#fbbf24; border-color:rgba(245,158,11,.35); background:rgba(245,158,11,.12); }
+        .empty{ color:var(--muted); font-size:13px; padding:8px; }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-logo"></div>
+                <h2>Bank Admin</h2>
+            </div>
+            <div class="nav">
+                <a class="active" href="#">Overview</a>
+                <a href="/dashboard">Back to App</a>
+                <a href="/logout">Logout</a>
+            </div>
+        </aside>
+        <main class="content">
+            <header>
+                <div>
+                    <h2 style="margin:0">Admin Dashboard</h2>
+                    <div class="pill" style="display:inline-block; margin-top:6px;">Role: Admin</div>
+                </div>
+                <div class="quick">
+                    <a class="btn-ghost" href="/register?role=ADMIN">Create New Admin</a>
+                    <a class="btn-ghost" href="/logout">Logout</a>
+                </div>
+            </header>
+
+            <section class="stats">
+                <div class="stat"><h4>Total Users</h4><p id="statUsers">-</p></div>
+                <div class="stat"><h4>Bank Persons</h4><p id="statBankPersons">-</p></div>
+                <div class="stat"><h4>Pending Loans</h4><p id="statPendingLoans">-</p></div>
+                <div class="stat"><h4>All Loans</h4><p id="statAllLoans">-</p></div>
+            </section>
+
+            <section class="grid">
+                <div class="panel">
+                    <h3>Users</h3>
+                    <div id="users" class="list"></div>
+                </div>
+                <div class="panel">
+                    <h3>Bank Persons</h3>
+                    <div id="bankPersons" class="list"></div>
+                </div>
+            </section>
+
+            <section class="panel" style="margin-top:16px;">
+                <h3>Pending Loans</h3>
+                <div id="pendingLoans" class="list"></div>
+            </section>
+        </main>
+    </div>
+    <script>
+        async function fetchJSON(u){ 
+            try {
+                console.log('Fetching:', u);
+                const r = await fetch(u); 
+                if(!r.ok) {
+                    const errorText = await r.text();
+                    console.error('HTTP Error:', r.status, errorText);
+                    throw new Error(`HTTP ${r.status}: ${errorText}`); 
+                }
+                const data = await r.json();
+                console.log('Response data:', data);
+                return data;
+            } catch(e) {
+                console.error('Fetch error for', u, ':', e);
+                throw e;
+            }
+        }
+        function btn(label, onclick){ return `<button class=\"btn\" onclick=\"${onclick}\">${label}</button>`; }
+        function link(label, onclick){ return `<button class=\"btn-ghost\" onclick=\"${onclick}\">${label}</button>`; }
+        async function loadUsers(){
+            try{
+                const data = await fetchJSON('/api/admin/users');
+                document.getElementById('users').innerHTML = data.length ? data
+                    .filter(u => (u.role || '').toUpperCase() === 'USER')
+                    .map(u=>`
+                        <div class=\"row\">
+                            <div>
+                                <div><strong>${u.username}</strong> <span class=\"badge\">${u.role}</span></div>
+                                <div class=\"meta\">User ID: ${u.userId || '-'} ${u.bankPersonId? ' | BankPerson ID: '+u.bankPersonId : ''}</div>
+                            </div>
+                            <div class=\"actions\"> 
+                                ${link('View', `adminViewUser(\'${u.userId}\')`)}
+                                ${btn('Delete', `adminDeleteUser(\'${u.userId}\')`)}
+                            </div>
+                        </div>
+                    `).join('') : `<div class=\"empty\">No users found</div>`;
+                document.getElementById('statUsers').textContent = data.filter(u => (u.role||'').toUpperCase()==='USER').length;
+            }catch(e){ document.getElementById('users').innerHTML = '<div style="color:#f88">Failed to load users</div>'; }
+        }
+        async function loadBankPersons(){
+            try{
+                const data = await fetchJSON('/api/admin/bank-persons');
+                document.getElementById('bankPersons').innerHTML = data.length ? data.map(u=>`
+                    <div class=\"row\">
+                        <div>
+                            <div><strong>${u.username}</strong> <span class=\"badge\">BANK_PERSON</span></div>
+                            <div class=\"meta\">User ID: ${u.userId || '-'} | BankPerson ID: ${u.bankPersonId || '-'}</div>
+                        </div>
+                        <div class=\"actions\"> 
+                            ${link('View', `adminViewUser(\'${u.userId}\')`)}
+                            ${btn('Delete', `adminDeleteUser(\'${u.userId}\')`)}
+                        </div>
+                    </div>
+                `).join('') : `<div class=\"empty\">No bank persons</div>`;
+                document.getElementById('statBankPersons').textContent = data.length;
+            }catch(e){ document.getElementById('bankPersons').innerHTML = '<div style="color:#f88">Failed to load bank persons</div>'; }
+        }
+        async function loadPendingLoans(){
+            try{
+                const data = await fetchJSON('/api/admin/loans/pending');
+                document.getElementById('pendingLoans').innerHTML = data.length ? data.map(l=>`
+                    <div class=\"row\">
+                        <div>
+                            <div><strong>Loan #${l.id}</strong> <span class=\"badge warning\">PENDING</span></div>
+                            <div class=\"meta\">Amount: ${l.amount}</div>
+                        </div>
+                        <div class=\"actions\">
+                            ${btn('Approve', `adminApproveLoan(${l.id})`)}
+                            ${btn('Decline', `adminDeclineLoan(${l.id})`)}
+                        </div>
+                    </div>
+                `).join('') : `<div class=\"empty\">No pending loans</div>`;
+                document.getElementById('statPendingLoans').textContent = data.length;
+                // Also update all loans stat for a quick overview
+                try { const allLoans = await fetchJSON('/api/admin/loans'); document.getElementById('statAllLoans').textContent = (allLoans||[]).length; } catch {}
+            }catch(e){ document.getElementById('pendingLoans').innerHTML = '<div style="color:#f88">Failed to load loans</div>'; }
+        }
+        async function adminDeleteUser(userId){ if(!confirm('Delete user '+userId+'?')) return; const r = await fetch('/api/admin/users/'+userId,{method:'DELETE'}); const t = await r.text(); if(!r.ok){ alert(t); return;} await loadUsers(); await loadBankPersons(); }
+        async function adminViewUser(userId){
+            try{
+                console.log('Fetching user details for:', userId);
+                
+                // First test if user exists
+                console.log('Testing user existence...');
+                const testData = await fetchJSON('/api/admin/test-user/'+userId);
+                console.log('Test data:', testData);
+                
+                if (!testData.exists) {
+                    alert('User not found');
+                    return;
+                }
+                
+                // Now get full user details
+                const data = await fetchJSON('/api/admin/users/'+userId);
+                console.log('User data:', data);
+                
+                if (!data || !data.user) {
+                    alert('User not found');
+                    return;
+                }
+                
+                const tx = await fetchJSON('/api/admin/users/'+userId+'/transactions');
+                console.log('Transactions:', tx);
+                
+                const detail = `User Details:\n\n`+
+                               `Username: ${data.user.username}\n`+
+                               `Role: ${data.user.role}\n`+
+                               `User ID: ${data.user.userId || 'N/A'}\n`+
+                               `${data.user.bankPersonId ? 'Bank Person ID: ' + data.user.bankPersonId + '\n' : ''}`+
+                               `\nAccount Information:\n`+
+                               `Account Number: ${data.account ? data.account.accountNumber : 'N/A'}\n`+
+                               `Balance: ${data.account ? data.account.balance : 'N/A'}\n\n`+
+                               `Recent Transactions (${tx ? tx.length : 0} total):\n`+
+                               (tx && tx.length > 0 ? tx.slice(0,10).map(t=>` - ${t.type}: ${t.amount} (${t.description||'No description'})`).join('\n') : 'No transactions found');
+                alert(detail);
+            }catch(e){ 
+                console.error('Error loading user details:', e);
+                alert('Failed to load details: ' + e.message); 
+            }
+        }
+        async function adminApproveLoan(id){ const r = await fetch('/api/admin/loans/'+id+'/approve',{method:'POST'}); const t = await r.text(); if(!r.ok){ alert(t); return;} await loadPendingLoans(); }
+        async function adminDeclineLoan(id){ const r = await fetch('/api/admin/loans/'+id+'/decline',{method:'POST'}); const t = await r.text(); if(!r.ok){ alert(t); return;} await loadPendingLoans(); }
+        document.addEventListener('DOMContentLoaded', ()=>{ loadUsers(); loadBankPersons(); loadPendingLoans(); });
+    </script>
+</body>
+</html>
+
